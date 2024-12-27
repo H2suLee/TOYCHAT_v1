@@ -7,6 +7,7 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 
 import com.toychat.prj.handler.WebSocketAdminHandler;
 import com.toychat.prj.handler.WebSocketChatHandler;
+import com.toychat.prj.handler.WebSocketSessionManager;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,7 +22,7 @@ public class WebSocketConfig implements WebSocketConfigurer{
 	
 	@Override
 	public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-		// ws://주소:포트/ws/chat로 요청이 들어오면 웹소켓 핸드쉐이킹
+		// 웹소켓 핸드쉐이킹
 		registry.addHandler(webSocketChatHandler, "/ws/chat").setAllowedOrigins("*");
 		registry.addHandler(webSocketAdminHandler, "/ws/adminOnList").setAllowedOrigins("*");
 	}

@@ -25,24 +25,24 @@ import lombok.extern.slf4j.Slf4j;
 public class WebSocketAdminHandler extends TextWebSocketHandler {
 	private final ConcurrentMap<String, Set<WebSocketSession>> admSessions = new ConcurrentHashMap<>();
 	private final Set<WebSocketSession> sessions = new HashSet<WebSocketSession>();
-
+	private final WebSocketSessionManager sessionManager;
+	
 	// 오픈시
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
 		
 		sessions.add(session);
-
+		sessionManager.addSession("admin", session);
 		URI uri = session.getUri();
 		if (uri != null) {
 			String query = uri.getQuery();
 			if (query != null) {
 				Map<String, String> queryParams = parseQuery(query);
 				String nick = queryParams.get("nick");
-				if (!nick.equals("null")) {
+				if (nick != null) {
 					session.getAttributes().put("nick", nick);
 					admSessions.computeIfAbsent(nick, k -> ConcurrentHashMap.newKeySet()).add(session);
 
-					System.out.println("Connected user: " + nick);
 				}
 			}
 		}
@@ -58,14 +58,13 @@ public class WebSocketAdminHandler extends TextWebSocketHandler {
 			Set<WebSocketSession> userSessions = admSessions.get(nick);
 			if (userSessions != null) {
 				userSessions.remove(session);
-				System.out.println("userSession removed");
 				if (userSessions.isEmpty()) {
 					admSessions.remove(nick);
-					System.out.println("sessions removed");
 				}
 			}
 		}
 
+		sessionManager.removeSession("admin", session);
 		sessions.remove(session);
 		broadcastActiveAdmins();
 	}
@@ -73,10 +72,9 @@ public class WebSocketAdminHandler extends TextWebSocketHandler {
 	// 접속중인 admin 목록 send
 	private void broadcastActiveAdmins() {
 		for (WebSocketSession session : sessions) {
-			System.out.println("================================ broadcasting......" + session.getId() + " / " + session.getAttributes().get("nick") );
-			if (session.isOpen()) { // 관리자세션인지 아닌지도 검사해야할까..
+			// 사용자에게만 보냄
+			if (session.isOpen() && session.getAttributes().get("nick") == null) { 
 				String admStr = getActiveAdm();
-				System.out.println("actvAdm >>> " + admStr);
 				try {
 					session.sendMessage(new TextMessage(admStr));
 				} catch (IOException e) {
@@ -103,4 +101,5 @@ public class WebSocketAdminHandler extends TextWebSocketHandler {
 				.map(Map.Entry::getKey) // 닉네임 추출
 				.collect(Collectors.joining(","));
 	}
+
 }

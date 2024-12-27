@@ -11,7 +11,7 @@ import static org.springframework.data.mongodb.core.aggregation.Aggregation.unwi
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -32,8 +32,10 @@ import org.springframework.stereotype.Service;
 
 import com.toychat.prj.common.sequence.SequenceService;
 import com.toychat.prj.common.util.Util;
+import com.toychat.prj.entity.Chat;
 import com.toychat.prj.entity.Chatroom;
 import com.toychat.prj.entity.ChatroomInfo;
+import com.toychat.prj.entity.Participant;
 import com.toychat.prj.entity.User;
 import com.toychat.prj.repository.ChatroomRepository;
 import com.toychat.prj.repository.UserRepository;
@@ -125,8 +127,8 @@ public class ChatroomService {
                 .first("lastMessages.type").as("lastChatType")
                 .first("lastMessages.credt").as("lastCredt");
         
-        // 마지막 채팅일시 내림차순
-        SortOperation finalSortOperation = sort(Sort.by(Sort.Direction.DESC, "lastCredt"));
+        // 상태, 마지막 채팅일시 내림차순
+        SortOperation finalSortOperation = sort(Sort.by(Sort.Order.asc("status"),Sort.Order.desc("lastCredt")));
 
         // Aggregation 파이프라인을 설정
         Aggregation aggregation = newAggregation(
@@ -150,7 +152,7 @@ public class ChatroomService {
 	// 채팅 관리 리스트 : 상태가 02, 03 인 [카테고리, 상태(진행중/완료), 채팅방 생성일, 채팅방 수정일, 문의자, 관리(메모)]
 	public List<ChatroomInfo> getChatRoomsMngList(HashMap<String, Object> searchMap) {
 		// 필터링 조건
-		MatchOperation matchOperation = match(Criteria.where("status").in("02", "03")
+		MatchOperation matchOperation = match(Criteria.where("status").is("03")
 		                                             .and("participants").ne(null));
 
 		// participants의 수 계산 및 필터링
@@ -197,7 +199,7 @@ public class ChatroomService {
 	public List<ChatroomInfo> getLiveChatWaitingList(HashMap<String, Object> searchMap) {
         // 쿼리 작성
         Query query = new Query()
-                .addCriteria(Criteria.where("status").is("01"))
+                .addCriteria(Criteria.where("status").in("01", "02"))
                 .addCriteria(Criteria.where("participants").ne(null));
 
         query.fields()
@@ -212,11 +214,13 @@ public class ChatroomService {
         return results;
 	}
 
+	// 채팅방 관리 디테일 조회
 	public Chatroom getChatManageInfo(Chatroom chatroom) {
 		String chatroomId = chatroom.getChatroomId();
 		return chatroomRepository.findById(chatroomId).get();
 	}
 
+	// 채팅방 관리 디테일 저장
 	public void saveChatManageInfo(Chatroom chatroom) {
 		String credt = util.getNowDttm();
 		Chatroom saveVo = chatroomRepository.findById(chatroom.getChatroomId()).get();
@@ -224,6 +228,59 @@ public class ChatroomService {
 		saveVo.setMemo(chatroom.getMemo());
 		saveVo.setUpddt(credt);
 		chatroomRepository.save(saveVo);
+	}
+	
+	// 채팅방 상테 업데이트
+	public void closeChatroom(String chatroomId) {
+		Chatroom room = chatroomRepository.findById(chatroomId)
+				.orElseThrow(() -> new RuntimeException("Chatroom not found"));
+
+		String credt = util.getNowDttm();
+		room.setUpddt(credt);
+		room.setStatus("03");
+		chatroomRepository.save(room);
+	}
+	
+	// 참여자 업데이트
+	public String addParticipant(Chat chatMessageDto) {
+		String status = "01";
+		Chatroom room = chatroomRepository.findById(chatMessageDto.getChatroomId())
+				.orElseThrow(() -> new RuntimeException("Chatroom not found"));
+
+		// 참여자 build
+		Participant participant = Participant.builder().id(chatMessageDto.getId()).nick(chatMessageDto.getNick())
+				.joindt(chatMessageDto.getCredt()) // 현재 날짜와 시간으로 joindt 설정
+				.build();
+		
+		List<Participant> participants = new ArrayList<Participant>();
+		
+		if (room.getParticipants() != null) {
+			participants = room.getParticipants();
+			status = "02"; // 진행중
+		}
+
+		participants.add(participant);
+		room.setParticipants(participants);
+
+		room.setStatus(status);
+
+		// chatroom에 채팅방 등록
+		chatroomRepository.save(room);
+		
+		return status;
+	}
+
+	public boolean isNewParticipant(Chat chat) {
+		Query query = new Query(
+			    Criteria.where("_id").is(chat.getChatroomId())
+			            .and("participants")
+			            .elemMatch(Criteria.where("_id").is(chat.getId()))
+			);
+
+		boolean exists = mongoTemplate.exists(query, "chatrooms");
+		System.out.println("exists : " + exists);
+		boolean isNew = !exists;
+		return isNew;
 	}
 	
 }

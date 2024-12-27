@@ -1,10 +1,9 @@
 package com.toychat.prj.web;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,15 +38,32 @@ public class ChatController {
     // 사용자 채팅 이력
     @PostMapping("/chatroomList")
     public List<ChatroomInfo> getChatRoomsByUserId(@RequestBody User user) {
-    	System.out.println("============================/chat/chatroomList");
         return chatroomService.getChatRoomsByUserId(user);
     }    
 
     // 채팅 상세
     @PostMapping("/chatList")
     public List<Chat> getChatsByChatroomId(@RequestBody Chatroom chatroom) {
-    	System.out.println("============================/chat/chatDetail");
     	return chatService.getChatsByChatroomId(chatroom);
     }    
+
+    // 채팅 상세 by redis
+    @PostMapping("/liveChatList")
+    public List<Object> liveChatList(@RequestBody Chatroom chatroom) {
+    	List<Object> returnList = new ArrayList<>();
+    	try {
+    		returnList = chatService.getLiveChatsByChatroomId(chatroom);
+		} catch (Exception e) {
+			e.printStackTrace();
+			// TODO: handle exception
+		}
+    	return returnList; 
+    }    
+    
+    @PostMapping("/isNew")
+    public boolean isNew(@RequestBody Chat chat){
+    	boolean isNew = chatroomService.isNewParticipant(chat);
+    	return isNew;
+    }
 
 }

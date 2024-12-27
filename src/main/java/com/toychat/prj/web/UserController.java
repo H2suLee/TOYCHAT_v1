@@ -28,7 +28,6 @@ public class UserController {
 
     @PostMapping("/save")
     public User createUser(@RequestBody User user) {
-    	System.out.println("in================================");
 //    	user.setId("test01");
 //    	user.setNick("테스트유저1");
 //    	user.setPw("test1234");
@@ -38,7 +37,6 @@ public class UserController {
     
     @PostMapping("/login")
     public User login(@RequestBody User user) {
-    	System.out.println("in================================");
 //    	user.setId("test01");
 //    	user.setNick("테스트유저1");
 //    	user.setPw("test1234");

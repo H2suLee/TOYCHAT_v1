@@ -14,6 +14,7 @@ import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.aggregation.MatchOperation;
 import org.springframework.data.mongodb.core.aggregation.SortOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import com.toychat.prj.entity.Chat;
@@ -23,7 +24,9 @@ import com.toychat.prj.repository.ChatRepository;
 @Service
 public class ChatService {
 	private final MongoTemplate mongoTemplate;
-
+	@Autowired
+	private RedisTemplate<String, Object> redisTemplate;
+	
 	@Autowired
     public ChatService(MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
@@ -52,4 +55,11 @@ public class ChatService {
 		
 		return list;
 	}
+
+	public List<Object> getLiveChatsByChatroomId(Chatroom chatroom) {
+		String chatRoomId = chatroom.getChatroomId();
+		List<Object> messages = redisTemplate.opsForList().range("chat_" + chatRoomId, 0, -1);
+		return messages;
+	}
+
 }

@@ -16,6 +16,7 @@ import org.springframework.web.socket.WebSocketSession;
 import com.toychat.prj.entity.Chat;
 import com.toychat.prj.entity.Chatroom;
 import com.toychat.prj.entity.ChatroomInfo;
+import com.toychat.prj.entity.User;
 import com.toychat.prj.entity.UserDetailsImpl;
 import com.toychat.prj.handler.WebSocketChatHandler;
 import com.toychat.prj.service.ChatService;
@@ -34,10 +35,9 @@ public class AdminChatConroller {
     @Autowired
     private ChatroomService chatroomService;
     
-    // 관리자 채팅 이력 : 상상태가 02, 03 인 [카테고리, 상태(진행중/완료), 채팅방 생성일, 채팅방 수정일, 문의자, 관리(메모)]
+    // 관리자 채팅 이력 : 03 인 [카테고리, 상태(진행중/완료), 채팅방 생성일, 채팅방 수정일, 문의자, 관리(메모)]
     @PostMapping("/mnglist")
     public List<ChatroomInfo> getChatRoomsMngList(@RequestBody HashMap<String,Object> searchMap) {
-    	System.out.println("============================/admin/chat/mnglist");
         // id
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
@@ -46,44 +46,29 @@ public class AdminChatConroller {
         return chatroomService.getChatRoomsMngList(searchMap);
     }    
     
-    // 채팅 대기 리스트 : 상태가 01 인 [생성일, 사용자 이름, 상태]
+    // 채팅 대기 리스트 : 상태가 01, 02인 [생성일, 사용자 이름, 상태]
     @PostMapping("/liveChatWaitingList")
     public List<ChatroomInfo> getLiveChatWaitingList(@RequestBody HashMap<String,Object> searchMap) {
-    	System.out.println("============================/admin/chat/liveChatWaitingList");
-    	
     	return chatroomService.getLiveChatWaitingList(searchMap);
     }     
 
     // 채팅 관리 정보 : category, memo
     @PostMapping("/chatManageInfo")
     public Chatroom getChatManageInfo(@RequestBody Chatroom chatroom) {
-    	System.out.println("============================/admin/chat/chatManageInfo");
-    	
     	return chatroomService.getChatManageInfo(chatroom);
     }     
 
     // 채팅 관리 저장 : category, memo
     @PostMapping("/saveChatManageInfo")
     public void saveChatManageInfo(@RequestBody Chatroom chatroom) {
-    	System.out.println("============================/admin/chat/saveChatManageInfo");
     	chatroomService.saveChatManageInfo(chatroom);
     }     
 
-    // 내 이력
+    // 내 이력 : 상태가 02, 03인 [생성일, 사용자 이름, 상태]
     @PostMapping("/mylist")
-    public List<ChatroomInfo> getChatRoomsByUserId() {
-    	System.out.println("============================/admin/chat/chatroomList");
-//        return chatroomService.getChatRoomsByUserId(user);
-        return null;
-    }        
-
-    // 채팅 상세
-    @PostMapping("/chatList")
-    public List<Chat> getChatsByChatroomId(@RequestBody Chatroom chatroom) {
-    	System.out.println("============================/admin/chat/chatDetail");
-//    	return chatService.getChatsByChatroomId(chatroom);
-    	return null;
-    }    
+    public List<ChatroomInfo> getChatRoomsByUserId(@RequestBody User user) {
+        return chatroomService.getChatRoomsByUserId(user);
+    }       
     
 
 }

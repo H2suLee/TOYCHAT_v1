@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import com.toychat.prj.entity.User;
 import com.toychat.prj.entity.UserDetailsImpl;
-import com.toychat.prj.repository.UserRepository;
 
 @Service
 public class UserDetailServiceImpl implements UserDetailsService {
