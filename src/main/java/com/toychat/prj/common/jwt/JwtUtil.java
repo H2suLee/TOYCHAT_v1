@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Claims;
@@ -13,8 +14,12 @@ import io.jsonwebtoken.SignatureAlgorithm;
 
 @Component
 public class JwtUtil {
-    private String secret = "KRTK30EC/Htq7PNRiCpsC5WJTjGJd6D5OUMcQn0rT5Y=";
-
+	
+	@Value("${jwt.secret}")
+    private String secret;
+    @Value("${jwt.expiration}")
+    private long jwtExpirationSeconds;
+    
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
@@ -44,7 +49,7 @@ public class JwtUtil {
 
     private String createToken(Map<String, Object> claims, String subject) {
         return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
+                .setExpiration(new Date( new Date().getTime() + jwtExpirationSeconds * 1000))
                 .signWith(SignatureAlgorithm.HS256, secret).compact();
     }
 
