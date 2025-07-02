@@ -41,10 +41,10 @@ public class SecurityConfig {
         http
             .csrf(AbstractHttpConfigurer::disable) // CSRF 비활성화
             .authorizeHttpRequests(auth -> auth
-                //.requestMatchers("/api/admin/login", "/api/admin/register", "/ws/**").permitAll() // 인증 필요 없는 경로
-                //.requestMatchers("/admin/**").hasRole("ADM")
-                //.anyRequest().authenticated() // 다른 모든 요청은 인증 필요
-           		.anyRequest().permitAll()	
+                .requestMatchers("/api/admin/login", "/api/admin/register", "/login/oauth2/**", "/ws/**").permitAll() // 인증 필요 없는 경로
+                .requestMatchers("/admin/**").hasRole("ADM")
+                .anyRequest().authenticated() // 다른 모든 요청은 인증 필요
+           		//.anyRequest().permitAll()	
             )
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 세션 사용하지 않음

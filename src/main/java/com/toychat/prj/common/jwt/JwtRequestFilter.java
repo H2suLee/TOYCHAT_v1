@@ -41,6 +41,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         // JWT 토큰이 있고, 사용자 인증이 안 된 경우
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+        	System.out.println("username : " + username);
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 
             // 토큰이 유효한 경우 수동으로 인증 설정

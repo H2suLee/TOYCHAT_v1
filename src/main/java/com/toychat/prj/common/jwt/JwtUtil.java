@@ -42,7 +42,7 @@ public class JwtUtil {
     }
 
     public String generateToken(String username) {
-    	System.out.println("generateToken");
+    	System.out.println("generateToken : " + username);
         Map<String, Object> claims = new HashMap<>();
         return createToken(claims, username);
     }
