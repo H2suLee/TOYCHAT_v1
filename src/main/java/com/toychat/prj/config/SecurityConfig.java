@@ -17,7 +17,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import com.toychat.prj.common.jwt.JwtRequestFilter;
 import com.toychat.prj.handler.CustomOAuth2FailureHandler;
 import com.toychat.prj.handler.CustomOAuth2SuccessHandler;
-import com.toychat.prj.handler.CustomOAuth2UserService;
+import com.toychat.prj.service.CustomOAuth2UserService;
 
 
 @Configuration

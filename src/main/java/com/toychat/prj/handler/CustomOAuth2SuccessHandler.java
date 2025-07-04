@@ -13,6 +13,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.toychat.prj.common.jwt.JwtUtil;
 import com.toychat.prj.common.util.Util;
+import com.toychat.prj.entity.CustomOAuth2User;
+import com.toychat.prj.entity.User;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,19 +38,14 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
         uri = "http://localhost:9091"; // 로컬용
         
         String fullUrl = "";
-    	DefaultOAuth2User oauth2User = (DefaultOAuth2User)authentication.getPrincipal();
+        CustomOAuth2User oauth2User = (CustomOAuth2User)authentication.getPrincipal();
         if (isUser(oauth2User)) {
         	System.out.println("로그인 성공");
-        	
-        	Map<String, Object> attributes = oauth2User.getAttributes();
-        	String id = String.valueOf(attributes.get("id"));
-        	Map<String, Object> properties =  (Map<String, Object>) attributes.get("properties");
-        	String nick = (String) properties.get("nickname");
-        	// jwtKey 부여
-        	String jwtToken = jwtUtil.generateToken(id);
+        	User user = oauth2User.getUser();
+        	String jwtToken = jwtUtil.generateToken(user.getId());
         	fullUrl = UriComponentsBuilder.fromUriString(uri + callbackPath)
-                    .queryParam("id",id)
-                    .queryParam("nick",nick)
+                    .queryParam("id",user.getId())
+                    .queryParam("nick",user.getNick())
                     .queryParam("jwt",jwtToken)
                     .build()
                     .encode()
@@ -68,7 +65,7 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
         }
     }
 
-    private boolean isUser(DefaultOAuth2User oAuth2User) {
+    private boolean isUser(CustomOAuth2User oAuth2User) {
         return oAuth2User.getAuthorities().stream()
             .anyMatch(authority -> authority.getAuthority().equals("ROLE_USR"));
     }
