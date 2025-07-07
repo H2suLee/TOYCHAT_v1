@@ -4,7 +4,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.stereotype.Component;
 
 import com.toychat.prj.entity.OAuth2Type;
@@ -23,7 +22,7 @@ public class OAuth2StrategyComposite {
 
 	public OAuth2Strategy getOAuth2Strategy(OAuth2Type provider) {
 		return Optional.ofNullable(oauthProviderMap.get(provider))
-                .orElseThrow(() -> new OAuth2AuthenticationException("not supported OAuth2 provider"));
+                .orElseThrow(() -> new NullPointerException("not supported OAuth2 provider"));
 	}
 	
 	

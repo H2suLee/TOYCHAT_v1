@@ -3,7 +3,7 @@ package com.toychat.prj.entity;
 import java.util.Arrays;
 
 public enum OAuth2Type {
-    KAKAO("kakao"), GITHUB("github");
+    KAKAO("kakao"), GITHUB("github"), NAVER("naver"), GOOGLE("google");
 
     private final String type;
 

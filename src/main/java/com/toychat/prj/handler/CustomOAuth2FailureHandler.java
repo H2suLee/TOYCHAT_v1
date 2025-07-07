@@ -16,18 +16,18 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @Component
 public class CustomOAuth2FailureHandler implements AuthenticationFailureHandler{
-	@Value("${spring.security.oauth2.client.registration.kakao.callback-path}")
+	@Value("${spring.security.oauth2.callback-path}")
     private String callbackPath;
 	
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
-        AuthenticationException exception) throws IOException, ServletException {
+        AuthenticationException e) throws IOException, ServletException {
         String uri = Util.getBaseUrl(request);
         System.out.println("로그인 실패 핸들러 : " + uri);
         uri = "http://localhost:9091"; // 로컬용
     	
 		String fullUrl = UriComponentsBuilder.fromUriString(uri + callbackPath)
-				.queryParam("error",exception.getLocalizedMessage())
+				.queryParam("error",e.getLocalizedMessage() != null?e.getLocalizedMessage():"Server Error")
 				.build()
 				.encode()
 				.toUriString();

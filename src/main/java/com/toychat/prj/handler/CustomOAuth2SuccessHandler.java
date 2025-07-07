@@ -26,7 +26,7 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
 	@Autowired
 	private JwtUtil jwtUtil;
 	
-	@Value("${spring.security.oauth2.client.registration.kakao.callback-path}")
+	@Value("${spring.security.oauth2.callback-path}")
     private String callbackPath;
 	
 	
