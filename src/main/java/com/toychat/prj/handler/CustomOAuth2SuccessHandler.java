@@ -34,7 +34,7 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
         Authentication authentication) throws IOException, ServletException {
         String uri = Util.getRedirectBaseUrl(request);
-        //uri = "http://localhost:9091";
+        //uri = "http://localhost:9091"; 9091에서 프론트 돌릴때만
         System.out.println("로그인 성공 핸들러 : " + uri);
         
         String fullUrl = "";
