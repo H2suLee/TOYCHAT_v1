@@ -19,6 +19,7 @@ import com.toychat.prj.handler.CustomOAuth2FailureHandler;
 import com.toychat.prj.handler.CustomOAuth2SuccessHandler;
 import com.toychat.prj.service.CustomOAuth2UserService;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.HttpServletResponse;
 
 
@@ -67,7 +68,11 @@ public class SecurityConfig {
         //http.oauth2Login(Customizer.withDefaults());
 
         // JWT 필터를 UsernamePasswordAuthenticationFilter 전에 추가
-        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+        try {
+        	http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+		} catch (ExpiredJwtException e) {
+			System.out.println("**jwt key 시간 만료");
+		}
 
         return http.build();
     }

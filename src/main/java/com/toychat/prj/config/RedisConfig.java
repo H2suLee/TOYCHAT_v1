@@ -1,7 +1,9 @@
 package com.toychat.prj.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
@@ -9,9 +11,23 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
 public class RedisConfig {
+    @Value("${spring.redis.port}")
+    private int redisPort;    // port를 지정해주지 않아서 접속이 안되었던 것.
+
+    @Value("${spring.redis.password}")
+    private String redisPassword;
+    
+    @Value("${spring.redis.host}")
+    private String redisHost;
+    
     @Bean
     public LettuceConnectionFactory redisConnectionFactory() {
-        return new LettuceConnectionFactory();
+    	RedisStandaloneConfiguration redisConfiguration = new RedisStandaloneConfiguration();
+        redisConfiguration.setPort(redisPort);
+        redisConfiguration.setPassword(redisPassword);
+        redisConfiguration.setHostName(redisHost);
+        LettuceConnectionFactory lettuceConnectionFactory = new LettuceConnectionFactory(redisConfiguration);
+        return lettuceConnectionFactory;
     }
 
     @Bean
