@@ -12,7 +12,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @Configuration
 public class RedisConfig {
     @Value("${spring.redis.port}")
-    private int redisPort;    // port를 지정해주지 않아서 접속이 안되었던 것.
+    private int redisPort;
 
     @Value("${spring.redis.password}")
     private String redisPassword;

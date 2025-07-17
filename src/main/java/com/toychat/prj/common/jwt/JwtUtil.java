@@ -44,10 +44,12 @@ public class JwtUtil {
     public String generateToken(String username) {
     	System.out.println("generateToken : " + username);
         Map<String, Object> claims = new HashMap<>();
+        claims.put("time", jwtExpirationSeconds);
         return createToken(claims, username);
     }
 
     private String createToken(Map<String, Object> claims, String subject) {
+    	System.out.println("set Expiration : " + new Date( new Date().getTime() + jwtExpirationSeconds * 1000));
         return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date( new Date().getTime() + jwtExpirationSeconds * 1000))
                 .signWith(SignatureAlgorithm.HS256, secret).compact();

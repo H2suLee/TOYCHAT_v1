@@ -31,9 +31,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService{
 		OAuth2User oAuth2User = super.loadUser(userRequest);
 		try {
 			
-			System.out.println("oAuth2User: {}" +  oAuth2User);
-			System.out.println("provider info: " +  userRequest.getClientRegistration().getRegistrationId());
-			
 			user = oAuth2StrategyComposite
 					.getOAuth2Strategy(getProvider(userRequest))
 					.getUserInfo(oAuth2User);

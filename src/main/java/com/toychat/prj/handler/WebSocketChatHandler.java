@@ -79,7 +79,6 @@ public class WebSocketChatHandler extends TextWebSocketHandler {
 		String chatRoomId = chatMessageDto.getChatroomId();
 
 		// 세션에 chatRoomId 저장
-		System.out.println("session is null? ::::" + (chatRoomId == null));
 		session.getAttributes().put("chatRoomId", chatRoomId);
 
 		// 메모리 상에 채팅방에 대한 세션 없으면 만들어줌
@@ -109,7 +108,6 @@ public class WebSocketChatHandler extends TextWebSocketHandler {
 			return;
 		}
 		
-		System.out.println("chatroomsession size : " + chatRoomSession.size());
 		sendMessageToChatRoom(chatMessageDto, chatRoomSession);
 
 		// Redis 저장

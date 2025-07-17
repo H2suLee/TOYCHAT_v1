@@ -43,6 +43,7 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
         	System.out.println("로그인 성공");
         	User user = oauth2User.getUser();
         	String jwtToken = jwtUtil.generateToken(user.getId());
+        	System.out.println("token : " + jwtToken);
         	fullUrl = UriComponentsBuilder.fromUriString(uri + callbackPath)
                     .queryParam("id",user.getId())
                     .queryParam("nick",user.getNick())
