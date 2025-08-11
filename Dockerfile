@@ -10,6 +10,7 @@ COPY src ./src
 # 패키지 빌드 (테스트 생략)
 RUN mvn clean package -DskipTests
 
+
 # 2단계: 실행용 슬림 이미지
 FROM openjdk:17-jdk-slim
 
