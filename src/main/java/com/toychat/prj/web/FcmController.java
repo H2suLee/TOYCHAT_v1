@@ -24,7 +24,6 @@ public class FcmController {
 	
     @PostMapping("/createKey")
     public String createKey(@RequestBody FcmKey fcmKey) {
-    	System.out.println("create Key");
     	try {
     		fcmService.saveFcmKey(fcmKey);
 		} catch (DuplicateKeyException e) {

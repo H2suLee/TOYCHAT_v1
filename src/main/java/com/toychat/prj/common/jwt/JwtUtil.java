@@ -58,7 +58,6 @@ public class JwtUtil {
     }
 
     private String createToken(Map<String, Object> claims, String subject) {
-    	System.out.println("set Expiration : " + new Date( new Date().getTime() + (long) claims.get("time") * 1000));
         return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date( new Date().getTime() + (long) claims.get("time") * 1000))
                 .signWith(SignatureAlgorithm.HS256, secret).compact();

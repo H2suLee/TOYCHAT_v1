@@ -1,2 +1,0 @@
-(function(){var e=null,t=0;function n(){setInterval((function(){if(e){var n=new Date,s=Math.floor((n-e)/1e3),a=t-s;a<0?(self.postMessage({type:"timeout"}),self.close()):self.postMessage({type:"tick",remainingTime:a})}}),1e3)}function s(n){e=new Date,t=n}self.addEventListener("message",(function(e){var t=e.data;"start"!=t.command&&"reset"!=t.command||(s(t.timeoutSeconds),n())}))})();
-//# sourceMappingURL=573.e7e87ddd.js.map

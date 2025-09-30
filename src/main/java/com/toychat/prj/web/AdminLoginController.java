@@ -9,9 +9,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,16 +22,12 @@ import com.toychat.prj.repository.UserRepository;
 import com.toychat.prj.service.UserService;
 
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/api")
 public class AdminLoginController {
 	@Autowired
 	private JwtUtil jwtUtil;
-
-	@Autowired
-	private UserDetailsService myUserDetailsService;
 
 	@Autowired
 	private AuthenticationManager authenticationManager;
@@ -94,21 +88,4 @@ public class AdminLoginController {
         return "User registered successfully";
     }	
 
-    @PostMapping("/refreshJwt")
-    public User refreshJwt(@CookieValue(name = "refreshToken", required = false) String refreshToken) {
-    	User user = new User();
-    	 if (refreshToken != null) {
-    		 String username = jwtUtil.extractUsername(refreshToken);
-    		 String stored = (String) redisTemplate.opsForValue().get("RT:" + username);
-    		 if (stored == null || !stored.equals(refreshToken)) {
-    			 throw new RuntimeException("Invalid or expired refresh token");
-    		 }
-
-    		 // 새 Access Token 발급
-    		 String newAccessToken = jwtUtil.generateAccessToken(username);
-    		 user.setJwt(newAccessToken);
-    	 }
-
-        return user;
-    }
 }
