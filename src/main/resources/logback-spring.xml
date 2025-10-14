@@ -2,6 +2,7 @@
 <configuration>
     <property name="LOG_DIR" value="${LOG_DIR}"/>
     
+    <!-- 기본 콘솔 출력 -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
@@ -19,6 +20,22 @@
             <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
+    
+    <!-- MongoTemplate 쿼리 로깅 -->
+    <logger name="org.springframework.data.mongodb.core.MongoTemplate" level="DEBUG" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+    </logger>
+
+    <!-- MongoDB Driver 로깅 (더 자세한 쿼리) -->
+    <!-- 
+    <logger name="org.mongodb.driver.protocol" level="DEBUG" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+    <logger name="org.mongodb.driver.connection" level="INFO" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+     -->
     
     <root level="DEBUG">
         <appender-ref ref="CONSOLE"/>
