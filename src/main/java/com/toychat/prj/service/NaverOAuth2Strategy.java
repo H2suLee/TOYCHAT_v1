@@ -20,7 +20,6 @@ public class NaverOAuth2Strategy implements OAuth2Strategy {
 	public User getUserInfo(OAuth2User oauth2User) {
 		Map<String, Object> attributes = oauth2User.getAttributes();
 		Map<String, Object> response = (Map<String, Object>) attributes.get("response");
-		System.out.println("naver response : " + response.toString());
 		String id = String.valueOf(response.get("id"));
 		String nick = String.valueOf(response.get("name"));
 		String role = "ROLE_USR";

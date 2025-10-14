@@ -59,7 +59,7 @@ public class WebSocketChatHandler extends TextWebSocketHandler {
 	// 소켓 연결 확인
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-		System.out.println("===================================================================== afterConnectionEstablished : " + session);
+		log.debug("===================================================================== afterConnectionEstablished : " + session);
 		sessions.add(session);
 		sessionManager.addSession("chat", session);
 	}
@@ -68,7 +68,7 @@ public class WebSocketChatHandler extends TextWebSocketHandler {
 	@Override
 	protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
 		String payload = message.getPayload();
-		System.out.println("===================================================================== handleTextMessage" + payload);
+		log.debug("===================================================================== handleTextMessage" + payload);
 
 		// 페이로드 -> chatMessageDto로 변환
 		Chat chatMessageDto = mapper.readValue(payload, Chat.class);
@@ -96,7 +96,7 @@ public class WebSocketChatHandler extends TextWebSocketHandler {
 		chatRoomSession.add(session);
 		removeClosedSession(chatRoomSession);
 
-		System.out.println("size: " + chatRoomSession.size());
+		log.debug("size: " + chatRoomSession.size());
 		// 입장시
 		if (chatMessageDto.getType().equals("ENTER")) {
 			// 챗방에 participant 추가
@@ -122,7 +122,7 @@ public class WebSocketChatHandler extends TextWebSocketHandler {
 	}
 
 	private void addParticipant(Chat chatMessageDto) {
-		System.out.println("===================================================================== addParticipant");
+		log.debug("===================================================================== addParticipant");
 		String status = chatroomService.addParticipant(chatMessageDto);
 
 		// 실시간 상담리스트 동기화
@@ -162,20 +162,20 @@ public class WebSocketChatHandler extends TextWebSocketHandler {
 	// 소켓 종료 확인
 	@Override
 	public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-		System.out.println("===================================================================== afterConnectionClosed");
-		System.out.println("종료");
+		log.debug("===================================================================== afterConnectionClosed");
+		log.debug("종료");
 		sessionManager.removeSession("chat", session);
 		sessions.remove(session);
 	}
 
 	// ====== 채팅 관련 메소드 ======
 	private void removeClosedSession(Set<WebSocketSession> chatRoomSession) {
-		System.out.println("===================================================================== removeClosedSession");
+		log.debug("===================================================================== removeClosedSession");
 		chatRoomSession.removeIf(sess -> !sessions.contains(sess));
 	}
 
 	private void sendMessageToChatRoom(Chat chatMessageDto, Set<WebSocketSession> chatRoomSession) {
-		System.out.println("===================================================================== sendMessageToChatRoom : ");
+		log.debug("===================================================================== sendMessageToChatRoom : ");
 		chatRoomSession.parallelStream().forEach(sess -> {
 			
 			String sessionRoomId = (String) sess.getAttributes().get("chatRoomId");
@@ -200,7 +200,7 @@ public class WebSocketChatHandler extends TextWebSocketHandler {
 			if(sessionRoomId.equals(chatMessageDto.getChatroomId())) {
 				if("TALK".equals(chatMessageDto.getType())) {
 					// chat type talk 이면
-					System.out.println(sessionRoomId + " fireBase send 필요");
+					log.debug(sessionRoomId + " fireBase send 필요");
 					// firebase type01 알람
 					String title = "[채팅 알람]";
 					String cont = chatMessageDto.getContent();
@@ -224,12 +224,12 @@ public class WebSocketChatHandler extends TextWebSocketHandler {
 	}
 
 	public <T> void sendMessage(WebSocketSession session, T message) {
-		System.out.println("===================================================================== sendMessage : " + session );
+		log.debug("===================================================================== sendMessage : " + session );
 		try {
 	        if (session != null && session.isOpen()) {  // 세션이 열려 있는지 확인
 	            session.sendMessage(new TextMessage(mapper.writeValueAsString(message)));
 	        } else {
-	            System.out.println("WebSocket session is closed. Unable to send message.");
+	            log.debug("WebSocket session is closed. Unable to send message.");
 	        }
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -238,7 +238,6 @@ public class WebSocketChatHandler extends TextWebSocketHandler {
 
 	// 실시간 상담 대기 리스트
 	private void broadcastActive01Chat() {
-		System.out.println("===================================================================== broadcastActive01Chat");
 		log.debug("===================================================================== broadcastActive01Chat");
 		// 관리자 상담 대기리스트 동기화
 		Set<WebSocketSession> adminSessions = sessionManager.getSessions("admin");

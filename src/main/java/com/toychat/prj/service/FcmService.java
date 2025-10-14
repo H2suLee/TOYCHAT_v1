@@ -21,10 +21,14 @@ import com.toychat.prj.entity.FcmKey;
 import com.toychat.prj.entity.FcmPush;
 import com.toychat.prj.entity.Participant;
 import com.toychat.prj.entity.User;
+import com.toychat.prj.handler.CustomOAuth2SuccessHandler;
 import com.toychat.prj.repository.FcmKeyRepository;
 import com.toychat.prj.repository.FcmPushRepository;
 import com.toychat.prj.repository.UserRepository;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 public class FcmService {
 	
@@ -54,13 +58,13 @@ public class FcmService {
     	String sender = msg.getSender();
     	
     	List<FcmKey> keyList = getKeyList(msg);
-    	List<String> tokenList = keyList.stream().map(FcmKey::getToken).toList();
+    	List<String> tokenList = keyList.stream().map(FcmKey::getToken).distinct().toList();
     	List<String> targetList = keyList.stream().map(FcmKey::getUserId).distinct().toList();
     	String credt = Util.getNowDttm();
     	
     	
     	Notification noti = Notification.builder().setTitle(title).setBody(body).build();
-    	System.out.println("수신키 : " + tokenList.toString());
+    	log.debug("수신키 : " + tokenList.toString());
     	try {
 
     		// send 단건
@@ -77,7 +81,7 @@ public class FcmService {
     			        .putData("sender", sender)
     					.build();
     			String response = FirebaseMessaging.getInstance().send(message);
-    			System.out.println("Successfully sent message: " + response);
+    			log.debug("Successfully sent message: " + response);
     		}
     		
     		// db 저장
@@ -104,7 +108,7 @@ public class FcmService {
     		 * */
 
         	//BatchResponse response = FirebaseMessaging.getInstance().sendMulticast(multimessage);
-        	//System.out.println("성공: " + response.getSuccessCount() + ", 실패: " + response.getFailureCount());
+        	//log.debug("성공: " + response.getSuccessCount() + ", 실패: " + response.getFailureCount());
         } catch (FirebaseMessagingException e) {
             e.printStackTrace();
         }

@@ -21,8 +21,9 @@ import com.toychat.prj.service.CustomOAuth2UserService;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 
-
+@Slf4j
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -40,7 +41,7 @@ public class SecurityConfig {
     }
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    	System.out.println("securityFilterChain");
+    	log.debug("securityFilterChain");
         http
             .csrf(AbstractHttpConfigurer::disable) // CSRF 비활성화
             .authorizeHttpRequests(auth -> auth

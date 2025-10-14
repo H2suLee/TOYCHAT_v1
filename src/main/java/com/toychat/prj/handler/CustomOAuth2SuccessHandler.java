@@ -13,6 +13,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.toychat.prj.common.jwt.JwtRequestFilter;
 import com.toychat.prj.common.jwt.JwtUtil;
 import com.toychat.prj.common.util.Util;
 import com.toychat.prj.entity.CustomOAuth2User;
@@ -22,7 +23,9 @@ import com.toychat.prj.entity.UserDetailsImpl;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Component
 public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler {
 	
@@ -42,7 +45,7 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
         Authentication authentication) throws IOException, ServletException {
         String uri = Util.getRedirectBaseUrl(request);
-        //uri = "http://localhost:9091"; //9091에서 프론트 돌릴때만
+        uri = "http://localhost:9091"; //9091에서 프론트 돌릴때만
         
         String fullUrl = "";
         CustomOAuth2User oauth2User = (CustomOAuth2User)authentication.getPrincipal();
@@ -72,7 +75,7 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
             response.sendRedirect(fullUrl);
             
         } else {
-        	System.out.println("로그인 실패");
+        	log.debug("로그인 실패");
         	fullUrl = UriComponentsBuilder.fromUriString(uri + callbackPath)
                     .queryParam("error","Not user")
                     .build()

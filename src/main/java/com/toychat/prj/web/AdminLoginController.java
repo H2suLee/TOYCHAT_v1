@@ -18,11 +18,14 @@ import org.springframework.web.bind.annotation.RestController;
 import com.toychat.prj.common.jwt.JwtUtil;
 import com.toychat.prj.entity.User;
 import com.toychat.prj.entity.UserDetailsImpl;
+import com.toychat.prj.handler.CustomOAuth2SuccessHandler;
 import com.toychat.prj.repository.UserRepository;
 import com.toychat.prj.service.UserService;
 
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequestMapping("/api")
 public class AdminLoginController {
@@ -71,14 +74,14 @@ public class AdminLoginController {
 		String jwtToken = jwtUtil.generateAccessToken(userDetails.getUsername());
 		user.setNick(userDetails.getUser().getNick());
 		user.setJwt(jwtToken);
-		System.out.println("login complete");
+		log.debug("login complete");
         return user;
     }
 
     @PostMapping("/adminRegister")
     public String register(@RequestBody User user) {
-    	System.out.println("Registering..");
-    	System.out.println(user.toString());
+    	log.debug("Registering..");
+    	log.debug(user.toString());
         User existingUser = userService.findByUserId(user.getId());
         if (existingUser != null) {
             throw new RuntimeException("User already exists : " + existingUser.toString());

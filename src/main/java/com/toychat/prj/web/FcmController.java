@@ -13,8 +13,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.toychat.prj.entity.FcmKey;
 import com.toychat.prj.entity.FcmPush;
+import com.toychat.prj.handler.CustomOAuth2SuccessHandler;
 import com.toychat.prj.service.FcmService;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @RestController
 @RequestMapping("/api/fcm")
 public class FcmController {
@@ -27,7 +31,7 @@ public class FcmController {
     	try {
     		fcmService.saveFcmKey(fcmKey);
 		} catch (DuplicateKeyException e) {
-			System.out.println("duplicate key");
+			log.debug("duplicate key");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -43,10 +47,10 @@ public class FcmController {
     @PostMapping("/listFcmPush")
     public List<FcmPush> listFcmPush(@RequestBody FcmPush vo) {
     	List<FcmPush> resultList = new ArrayList<FcmPush>();
-    	System.out.println("listFcm");
+    	log.debug("listFcm");
     	try {
     		resultList = fcmService.selectFcmPushList(vo);
-    		System.out.println("vo : " + vo.toString() + "listFcm size : " + resultList.size());
+    		log.debug("vo : " + vo.toString() + "listFcm size : " + resultList.size());
     	}catch (Exception e) {
     		e.printStackTrace();
     	}
