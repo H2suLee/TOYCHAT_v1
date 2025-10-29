@@ -1,0 +1,17 @@
+name: self-hosted
+on: [push]
+jobs:
+  build:
+    name: Build
+    runs-on: self-hosted
+    steps:
+      - name: executing remote ssh commands using password
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.HOST }}
+          username: root
+          password: ${{ secrets.PASSWORD }}
+          port: ${{ secrets.PORT }}
+          script: |
+            whoami
+            ls -al 
