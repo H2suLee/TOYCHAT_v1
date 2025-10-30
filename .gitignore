@@ -23,7 +23,7 @@ target/
 /nbproject/private/
 /nbbuild/
 /dist/
-/nbdist/
+/nbdist/ 
 /.nb-gradle/
 build/
 !**/src/main/**/build/
@@ -35,3 +35,4 @@ build/
 ### env ###
 /src/main/resources/application.properties
 /src/main/resources/firebase/*.json
+/.github/workflows/*.yml
