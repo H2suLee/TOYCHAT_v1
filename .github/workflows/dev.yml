@@ -7,4 +7,4 @@ jobs:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
-      - run: echo "✅ 러너가 job을 받았습니다!!!"
+      - run: echo "✅ 러너가 job을 받았습니다!!!!"
