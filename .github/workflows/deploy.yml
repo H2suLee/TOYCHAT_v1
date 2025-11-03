@@ -29,7 +29,6 @@ jobs:
           echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
           echo "TARGET_DIR=$BASE_PATH/$BRANCH_NAME/app"  >> $GITHUB_ENV
           echo "SERVICE_NAME=$BRANCH_NAME" >> $GITHUB_ENV
-          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
 
 
       - name: Clean old files
@@ -57,7 +56,7 @@ jobs:
         if: github.ref == 'refs/heads/main'
         env:
          IMAGE_NAME: toychat-main:latest
-         COMPOSE: $BASE_PATH/$BRANCH_NAME/docker/docker-compose.yml 
+         COMPOSE: ${{ env.BASE_PATH }}/${{ env.BRANCH_NAME }}/docker/docker-compose.yml 
         run: |
           cd $TARGET_DIR
           docker compose -f $COMPOSE down
