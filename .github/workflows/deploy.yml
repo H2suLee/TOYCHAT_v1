@@ -62,7 +62,7 @@ jobs:
           docker compose -f $COMPOSE down
           docker build -t $IMAGE_NAME .
           docker compose -f $COMPOSE up -d --build
-          echo "Restarting service $SERVICE_NAME"
+          echo "Restarting service $SERVICE_NAME ......."
 
       - name: PR build check
         if: github.event_name == 'pull_request' && github.base_ref == 'main'
