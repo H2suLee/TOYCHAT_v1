@@ -1,22 +1,73 @@
-name: CI/CD
+name: Branch-based Deployment
 
 on:
   push:
     branches:
       - dev
       - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  build:
-    if: github.ref == 'refs/heads/dev'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Build for dev
-        run: echo "Dev build running"
+  build-and-deploy:
+    runs-on: self-hosted
+    env:
+      BASE_PATH: /srv/toychat
 
-  deploy:
-    if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
     steps:
-      - name: Deploy to production
-        run: echo "Main deploy running"
+      - name: Checkout source
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set variables
+        id: set-vars
+        run: |
+          BRANCH_NAME="${GITHUB_REF##*/}"
+          echo "Current branch: $BRANCH_NAME"
+          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
+          echo "TARGET_DIR=$BASE_PATH/$BRANCH_NAME/app"  >> $GITHUB_ENV
+          echo "SERVICE_NAME=$BRANCH_NAME" >> $GITHUB_ENV
+          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
+
+
+      - name: Clean old files
+        run: |
+          echo "Cleaning $TARGET_DIR"
+          sudo rm -rf $TARGET_DIR/*
+          sudo mkdir -p $TARGET_DIR
+          sudo chown -R $(whoami):$(whoami) $TARGET_DIR
+
+      - name: Copy source
+        run: |
+          echo "Copying source to $TARGET_DIR"
+          cp -r ./* $TARGET_DIR/
+
+      - name: Deploy dev
+        if: github.ref == 'refs/heads/dev'
+        run: |
+          cd $TARGET_DIR
+          mvn clean package -DskipTests
+          cp target/*.jar $BASE_PATH/$BRANCH_NAME/deploy/app.jar
+          echo "Restarting service $SERVICE_NAME"
+          sudo systemctl restart $SERVICE_NAME          
+
+      - name: Deploy main
+        if: github.ref == 'refs/heads/main'
+        env:
+         IMAGE_NAME: toychat-main:latest
+         COMPOSE: $BASE_PATH/$BRANCH_NAME/docker/docker-compose.yml 
+        run: |
+          cd $TARGET_DIR
+          docker-compose -f $COMPOSE down
+          docker build -t $IMAGE_NAME .
+          docker-compose -f $COMPOSE up -d --build
+          echo "Restarting service $SERVICE_NAME"
+
+      - name: PR build check
+        if: github.event_name == 'pull_request' && github.base_ref == 'main'
+        run: |
+          echo "Pull Request build for main branch - no deployment"
+          cd $TARGET_DIR
+          mvn clean package -DskipTests
