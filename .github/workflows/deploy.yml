@@ -1,22 +1,40 @@
-name: CI/CD
+name: Auto Deploy on Self-Hosted Runner
 
 on:
   push:
     branches:
       - dev
       - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  build:
-    if: github.ref == 'refs/heads/dev'
-    runs-on: ubuntu-latest
+  build-and-deploy:
+    runs-on: self-hosted
     steps:
-      - name: Build for dev
-        run: echo "Dev build running"
+      - name: Checkout source
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-  deploy:
-    if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Deploy to production
-        run: echo "Main deploy running"
+      - name: Move source to deployment path
+        run: |
+          echo "Moving source to /srv/toychat/main/app"
+          sudo rm -rf /srv/toychat/main/app/*
+          sudo mkdir -p /srv/toychat/main/app
+          sudo cp -r ./* /srv/toychat/main/app/
+          sudo chown -R $(whoami):$(whoami) /srv/toychat/main/app
+
+      - name: Build backend
+        working-directory: /srv/toychat/main/app
+        run: mvn clean package -DskipTests
+
+      - name: Deploy (systemd restart)
+        run: |
+          echo "🚀 Restarting service for branch: ${{ github.ref_name }}"
+          if [ "${{ github.ref_name }}" = "dev" ]; then
+            sudo systemctl restart dev
+          elif [ "${{ github.ref_name }}" = "main" ]; then
+            sudo systemctl restart main
+          fi
