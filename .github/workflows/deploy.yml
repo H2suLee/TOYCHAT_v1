@@ -54,8 +54,10 @@ jobs:
           distribution: 'temurin'
 
       - name: Build backend
-        working-directory: $TARGET_DIR
-        run: mvn clean package -DskipTests
+        run: |
+          cd $TARGET_DIR
+          mvn clean package -DskipTests
+          cp target/*.jar $BASE_PATH/${BRANCH_NAME}/deploy/app.jar
 
       - name: Restart service
         run: |
