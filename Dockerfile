@@ -12,10 +12,7 @@ RUN mvn clean package -DskipTests
 
 
 # 2단계: 실행용 슬림 이미지
-FROM openjdk:17-jdk-slim
-#FROM h2sulee/toychat443:v5
-#FROM openjdk:17.0.1-jdk-slim
-
+FROM openjdk:17.0.1-jdk-slim
 
 WORKDIR /app
 
