@@ -52,11 +52,13 @@ jobs:
           
           cd $DEPLOY_DIR
           if [ -f "app.jar" ]; then
+            cp app.jar app.jar.last
             mv app.jar "app.jar.$(date +'%Y%m%d%H%M%S')"
+            
           fi
 
-          
           cp $TARGET_DIR/target/*.jar $DEPLOY_DIR/app.jar
+          
           echo "Restarting service $SERVICE_NAME"
           sudo systemctl restart $SERVICE_NAME          
 
@@ -74,7 +76,17 @@ jobs:
           done
 
           echo "Health check failed"
-          exit 1
+          
+          if [ -f "$DEPLOY_DIR/app.jar.last" ]; then
+            echo "Rolling back.."
+            cp "$DEPLOY_DIR/app.jar.last" "$DEPLOY_DIR/app.jar"
+            sudo systemctl restart $SERVICE_NAME
+            echo "Rollback completed to app.jar.last"
+            exit 1
+          else
+            echo "No app.jar.last found. Manual intervention required."
+            exit 1
+          fi
 
       - name: Set image tag
         id: vars
