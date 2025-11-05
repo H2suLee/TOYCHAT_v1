@@ -109,7 +109,7 @@ jobs:
             echo "Main health check failed. Rolling back..."
             exit 1
           else
-            echo "✅ Main service healthy."
+            echo "Main service healthy."
           fi
           
       - name: PR build check
