@@ -80,9 +80,9 @@ jobs:
           
           if [ -f "$DEPLOY_DIR/app.jar.last" ]; then
             echo "Rolling back.."
-            cp "$DEPLOY_DIR/app.jar.last" "$DEPLOY_DIR/app.jar"
+            mv "$DEPLOY_DIR/app.jar.last" "$DEPLOY_DIR/app.jar"
             sudo systemctl restart $SERVICE_NAME
-            echo "Rollback completed to app.jar.last"
+            echo "Rollback completed $SERVICE_NAME"
             exit 1
           else
             echo "No app.jar.last found. Manual intervention required."
