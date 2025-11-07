@@ -89,6 +89,15 @@ jobs:
             exit 1
           fi
 
+      - name: Cleanup dev
+        if: github.ref == 'refs/heads/dev'
+        run: |
+          echo "Cleaning old app.jar files and journal logs"
+
+          cd $DEPLOY_DIR
+          ls -1tr app.jar.* | head -n -3 | xargs -r rm -f
+          sudo journalctl --vacuum-size=200M
+          
       - name: Set image tag
         id: vars
         run: |
@@ -139,7 +148,14 @@ jobs:
             echo "Waiting for service..."
             sleep 5
           done
-          
+
+      - name: Cleanup main
+        if: github.ref == 'refs/heads/main'
+        run: |
+          echo "Cleaning old images"
+
+          docker system prune -f
+                    
       - name: PR build check
         if: github.event_name == 'pull_request' && github.base_ref == 'main'
         run: |
