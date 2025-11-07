@@ -46,7 +46,7 @@ public class SecurityConfig {
         http
             .csrf(AbstractHttpConfigurer::disable) // CSRF 비활성화
             .authorizeHttpRequests(auth -> auth
-            	//.requestMatchers(EndpointRequest.to("health", "info")).permitAll()
+            	.requestMatchers(EndpointRequest.to("health", "info")).permitAll()
             	.requestMatchers("/", "/admin", "/admin/**", "/chat/**", "/login/oauth2/**", "/api/adminLogin", "/api/adminRegister", "/api/common/refreshJwt", "/api/common/me", "/api/fcm/**", "/index.html", "/js/**", "/css/**", "/img/**", "/favicon.ico", "/firebase-messaging-sw.js", "/ws/**").permitAll() // 정적 리소스 인증 필요 없는 경로
                 .requestMatchers("/api/admin/**").hasRole("ADM")
                 .requestMatchers("/api/users/**").hasRole("USR")
