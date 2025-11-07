@@ -125,7 +125,6 @@ jobs:
 
           docker compose -f $COMPOSE up -d --build
           echo "Restarting service $SERVICE_NAME"
-          docker image prune -f
 
       - name: Health check main
         if: github.ref == 'refs/heads/main'
@@ -134,6 +133,7 @@ jobs:
          LAST_IMAGE_NAME: toychat-main:last        
         run: |
           echo "Running health check on port 9090..."
+          trap 'docker image prune -af' EXIT 
 
           MAX_RETRIES=12 
           RETRY_INTERVAL=5        # 5초 간격
@@ -167,15 +167,6 @@ jobs:
             echo "Rollback completed for $SERVICE_NAME"
             exit 1
           fi
-          docker image prune -f
-          
-
-      - name: Cleanup main
-        if: github.ref == 'refs/heads/main'
-        run: |
-          echo "Cleaning old images"
-
-          docker system prune -f
                     
       - name: PR build check
         if: github.event_name == 'pull_request' && github.base_ref == 'main'
