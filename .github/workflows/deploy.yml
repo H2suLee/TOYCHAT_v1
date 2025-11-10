@@ -101,19 +101,17 @@ jobs:
       - name: Set main variables
         id: vars
         if: github.ref == 'refs/heads/main'
-        env: 
-          GITHUB_USER: ${{ github.actor }}
-          GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
         run: |
-          echo "USERNAME=${GITHUB_USER}" >> $GITHUB_ENV
-          echo "GHCR_TOKEN=${GHCR_TOKEN}" >> $GITHUB_ENV
+          echo "GITHUB_USER=${{ github.actor }}" >> $GITHUB_ENV
+          echo "GHCR_TOKEN=${{ secrets.GHCR_TOKEN }}" >> $GITHUB_ENV
+          echo "GHCR_USER=${{ secrets.GHCR_USER }}" >> $GITHUB_ENV
 
           DATE=$(date +%Y%m%d)
           COMMIT=$(git rev-parse --short HEAD)
           echo "TAG=${DATE}-${COMMIT}" >> $GITHUB_ENV
           echo "TAG_NAME=${DATE}-${COMMIT}"
           
-          echo "IMAGE_NAME=ghcr.io/${GITHUB_USER}/toychat-main" >> $GITHUB_ENV
+          echo "IMAGE_NAME=ghcr.io/${GHCR_USER}/toychat-main" >> $GITHUB_ENV
           echo "LATEST=latest" >> $GITHUB_ENV
           echo "BACKUP=backup" >> $GITHUB_ENV
                     
@@ -121,6 +119,8 @@ jobs:
         if: github.ref == 'refs/heads/main'
         run: |
           cd $TARGET_DIR
+          
+          docker login ghcr.io -u ${GITHUB_USER} --password ${GHCR_TOKEN}
           
           docker image inspect $IMAGE_NAME:$LATEST > /dev/null 2>&1 && docker tag $IMAGE_NAME:$LATEST $IMAGE_NAME:$BACKUP || echo "No existing image to backup"
           
