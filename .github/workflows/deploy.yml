@@ -21,7 +21,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Set variables
+      - name: Set common variables
         id: set-vars
         run: |
           BRANCH_NAME="${GITHUB_REF##*/}"
@@ -98,39 +98,47 @@ jobs:
           ls -1tr app.jar.* | head -n -3 | xargs -r rm -f
           sudo journalctl --vacuum-size=200M
           
-      - name: Set image tag
+      - name: Set main variables
         id: vars
         if: github.ref == 'refs/heads/main'
+        env: 
+          GITHUB_USER: ${{ github.actor }}
+          GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
         run: |
+          echo "USERNAME=${GITHUB_USER}" >> $GITHUB_ENV
+          echo "GHCR_TOKEN=${GHCR_TOKEN}" >> $GITHUB_ENV
+
           DATE=$(date +%Y%m%d)
           COMMIT=$(git rev-parse --short HEAD)
           echo "TAG=${DATE}-${COMMIT}" >> $GITHUB_ENV
           echo "TAG_NAME=${DATE}-${COMMIT}"
+          
+          echo "IMAGE_NAME=ghcr.io/${GITHUB_USER}/toychat-main" >> $GITHUB_ENV
+          echo "LATEST=latest" >> $GITHUB_ENV
+          echo "BACKUP=backup" >> $GITHUB_ENV
                     
       - name: Deploy main
         if: github.ref == 'refs/heads/main'
-        env:
-         IMAGE_NAME: toychat-main:latest
-         LAST_IMAGE_NAME: toychat-main:last
         run: |
           cd $TARGET_DIR
           
-          docker image inspect $IMAGE_NAME > /dev/null 2>&1 && docker tag $IMAGE_NAME $LAST_IMAGE_NAME || echo "No existing image to backup"
+          docker image inspect $IMAGE_NAME:$LATEST > /dev/null 2>&1 && docker tag $IMAGE_NAME:$LATEST $IMAGE_NAME:$BACKUP || echo "No existing image to backup"
           
           docker compose -f $COMPOSE down
           
-          docker build -t $IMAGE_NAME .
-          docker build -t toychat-main:$TAG .
+          #latest
+          docker build -t $IMAGE_NAME:$LATEST .
+          docker push $IMAGE_NAME:$LATEST
           
-
+          #backup
+          docker build -t $IMAGE_NAME:$TAG .
+          docker push $IMAGE_NAME:$TAG
+          
           docker compose -f $COMPOSE up -d --build
           echo "Restarting service $SERVICE_NAME"
 
       - name: Health check main
         if: github.ref == 'refs/heads/main'
-        env:
-         IMAGE_NAME: toychat-main:latest
-         LAST_IMAGE_NAME: toychat-main:last        
         run: |
           echo "Running health check on port 9090..."
           trap 'docker image prune -af' EXIT 
@@ -162,7 +170,7 @@ jobs:
             
             echo "Rolling back to previous image..."
             docker compose -f $COMPOSE down
-            docker tag $LAST_IMAGE_NAME $IMAGE_NAME
+            docker tag $IMAGE_NAME:$BACKUP $IMAGE_NAME:$LATEST
             docker compose -f $COMPOSE up -d
             echo "Rollback completed for $SERVICE_NAME"
             exit 1
