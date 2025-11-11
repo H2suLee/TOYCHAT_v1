@@ -122,7 +122,7 @@ jobs:
         run: |
           cd $TARGET_DIR
           
-          docker login ghcr.io -u ${GITHUB_USER} --password ${GHCR_TOKEN}
+          echo $GHCR_TOKEN | docker login ghcr.io -u $GHCR_USER --password-stdin
           echo "---------------------------------------login"          
           
           docker pull $IMAGE_BASE:$LATEST > /dev/null 2>&1 \
