@@ -142,7 +142,6 @@ jobs:
           docker push $IMAGE_BASE:$TAG
           echo "---------------------------------------backup built and pushed $IMAGE_BASE:$TAG"
           
-          IMAGE_NAME=$IMAGE_BASE:$LATEST
           docker compose -f $COMPOSE up -d --build
           echo "Restarting service $SERVICE_NAME"
 
@@ -186,7 +185,6 @@ jobs:
             
             echo "---------------------------------------latest pushed $IMAGE_BASE:$LATEST"
             
-            IMAGE_NAME=$IMAGE_BASE:$LATEST
             docker compose -f $COMPOSE up -d
 
             echo "Rollback completed for $SERVICE_NAME"
