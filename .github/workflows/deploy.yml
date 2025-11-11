@@ -123,8 +123,12 @@ jobs:
           
           docker login ghcr.io -u ${GITHUB_USER} --password ${GHCR_TOKEN}
           
-          docker image inspect $IMAGE_NAME:$LATEST > /dev/null 2>&1 && docker tag $IMAGE_NAME:$LATEST $IMAGE_NAME:$BACKUP && docker push $IMAGE_NAME:$BACKUP || echo "No existing image to backup"
+          docker image inspect $IMAGE_NAME:$LATEST > /dev/null 2>&1 && docker tag $IMAGE_NAME:$LATEST $IMAGE_NAME:$BACKUP || echo "No existing image to backup"
+          docker pull $IMAGE_NAME:$LATEST > /dev/null 2>&1 \
+            && docker tag $IMAGE_NAME:$LATEST $IMAGE_NAME:$BACKUP \
+            && docker push $IMAGE_NAME:$BACKUP
           
+          echo "---------------------------------------backup pushed $IMAGE_NAME:$BACKUP"          
           docker compose -f $COMPOSE down
           
           #latest
@@ -173,8 +177,13 @@ jobs:
             
             echo "Rolling back to previous image..."
             docker compose -f $COMPOSE down
+            
             docker pull $IMAGE_NAME:$BACKUP
             docker tag $IMAGE_NAME:$BACKUP $IMAGE_NAME:$LATEST
+            docker push $IMAGE_NAME:$LATEST
+            
+            echo "---------------------------------------latest pushed $IMAGE_NAME:$LATEST"
+            
             docker compose -f $COMPOSE up -d
             echo "Rollback completed for $SERVICE_NAME"
             exit 1
