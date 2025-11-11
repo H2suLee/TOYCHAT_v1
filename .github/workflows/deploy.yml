@@ -1,4 +1,4 @@
-name: Branch-based Deployment
+name: Deployment
 
 on:
   push:
@@ -112,7 +112,7 @@ jobs:
           echo "TAG=${DATE}-${COMMIT}" >> $GITHUB_ENV
           echo "TAG_NAME=${DATE}-${COMMIT}"
           
-          echo "IMAGE_NAME=ghcr.io/${GHCR_USER}/toychat-main" >> $GITHUB_ENV
+          echo "IMAGE_BASE=ghcr.io/${GHCR_USER}/toychat-main" >> $GITHUB_ENV
           echo "LATEST=latest" >> $GITHUB_ENV
           echo "BACKUP=backup" >> $GITHUB_ENV
                     
@@ -123,24 +123,26 @@ jobs:
           
           docker login ghcr.io -u ${GITHUB_USER} --password ${GHCR_TOKEN}
           
-          docker image inspect $IMAGE_NAME:$LATEST > /dev/null 2>&1 && docker tag $IMAGE_NAME:$LATEST $IMAGE_NAME:$BACKUP || echo "No existing image to backup"
-          docker pull $IMAGE_NAME:$LATEST > /dev/null 2>&1 \
-            && docker tag $IMAGE_NAME:$LATEST $IMAGE_NAME:$BACKUP \
-            && docker push $IMAGE_NAME:$BACKUP
+          docker image inspect $IMAGE_BASE:$LATEST > /dev/null 2>&1 && docker tag $IMAGE_BASE:$LATEST $IMAGE_BASE:$BACKUP || echo "No existing image to backup"
           
-          echo "---------------------------------------backup pushed $IMAGE_NAME:$BACKUP"          
+          docker pull $IMAGE_BASE:$LATEST > /dev/null 2>&1 \
+            && docker tag $IMAGE_BASE:$LATEST $IMAGE_BASE:$BACKUP \
+            && docker push $IMAGE_BASE:$BACKUP
+          
+          echo "---------------------------------------backup pushed $IMAGE_BASE:$BACKUP"          
           docker compose -f $COMPOSE down
           
           #latest
-          docker build -t $IMAGE_NAME:$LATEST .
-          docker push $IMAGE_NAME:$LATEST
-          echo "---------------------------------------latest built and pushed $IMAGE_NAME:$LATEST"
+          docker build -t $IMAGE_BASE:$LATEST .
+          docker push $IMAGE_BASE:$LATEST
+          echo "---------------------------------------latest built and pushed $IMAGE_BASE:$LATEST"
           
           #backup
-          docker build -t $IMAGE_NAME:$TAG .
-          docker push $IMAGE_NAME:$TAG
-          echo "---------------------------------------backup built and pushed $IMAGE_NAME:$TAG"
+          docker build -t $IMAGE_BASE:$TAG .
+          docker push $IMAGE_BASE:$TAG
+          echo "---------------------------------------backup built and pushed $IMAGE_BASE:$TAG"
           
+          export IMAGE_NAME=$IMAGE_BASE:$LATEST
           docker compose -f $COMPOSE up -d --build
           echo "Restarting service $SERVICE_NAME"
 
@@ -178,13 +180,15 @@ jobs:
             echo "Rolling back to previous image..."
             docker compose -f $COMPOSE down
             
-            docker pull $IMAGE_NAME:$BACKUP
-            docker tag $IMAGE_NAME:$BACKUP $IMAGE_NAME:$LATEST
-            docker push $IMAGE_NAME:$LATEST
+            docker pull $IMAGE_BASE:$BACKUP
+            docker tag $IMAGE_BASE:$BACKUP $IMAGE_BASE:$LATEST
+            docker push $IMAGE_BASE:$LATEST
             
-            echo "---------------------------------------latest pushed $IMAGE_NAME:$LATEST"
+            echo "---------------------------------------latest pushed $IMAGE_BASE:$LATEST"
             
+            export IMAGE_NAME=$IMAGE_BASE:$LATEST
             docker compose -f $COMPOSE up -d
+
             echo "Rollback completed for $SERVICE_NAME"
             exit 1
           fi
@@ -195,3 +199,5 @@ jobs:
           echo "Pull Request build for main branch - no deployment"
           cd $TARGET_DIR
           mvn clean package -DskipTests
+
+          

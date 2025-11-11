@@ -1,0 +1,38 @@
+name: Manual Rollback
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Enter image tag to rollback"
+        required: true
+
+jobs:
+  rollback:
+    if: github.ref == 'refs/heads/main'
+    runs-on: self-hosted
+    steps:
+      - name: Rollback main
+        run: |
+
+          BASE_PATH=/srv/toychat
+          BRANCH_NAME="${GITHUB_REF##*/}"
+          echo "Rolling back service $BRANCH_NAME"
+          
+          IMAGE_BASE=toychat-main
+          INPUT_TAG=${{ github.event.inputs.target }}
+          
+          GITHUB_USER=${{ github.actor }}
+          GHCR_TOKEN=${{ secrets.GHCR_TOKEN }}
+          
+          cd $BASE_PATH/$BRANCH_NAME/docker
+          
+          docker login ghcr.io -u ${GITHUB_USER} --password ${GHCR_TOKEN}
+          docker pull $IMAGE_BASE:$INPUT_TAG
+          
+          export IMAGE_NAME=$IMAGE_BASE:$INPUT_TAG
+          docker compose -f $COMPOSE up -d --build
+          
+          echo "Restarting service $BRANCH_NAME"
+          
+          
