@@ -104,6 +104,7 @@ jobs:
         run: |
           echo "GITHUB_USER=${{ github.actor }}" >> $GITHUB_ENV
           echo "GHCR_TOKEN=${{ secrets.GHCR_TOKEN }}" >> $GITHUB_ENV
+          echo "${GHCR_TOKEN}"
           GHCR_USER=$(echo "${{ github.actor }}" | tr '[:upper:]' '[:lower:]')
           echo "GHCR_USER=$GHCR_USER" >> $GITHUB_ENV
 
@@ -122,7 +123,7 @@ jobs:
           cd $TARGET_DIR
           
           docker login ghcr.io -u ${GITHUB_USER} --password ${GHCR_TOKEN}
-          echo "---------------------------------------login ${GHCR_TOKEN}"          
+          echo "---------------------------------------login"          
           
           docker pull $IMAGE_BASE:$LATEST > /dev/null 2>&1 \
             && docker tag $IMAGE_BASE:$LATEST $IMAGE_BASE:$BACKUP \
