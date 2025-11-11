@@ -123,7 +123,7 @@ jobs:
           
           docker login ghcr.io -u ${GITHUB_USER} --password ${GHCR_TOKEN}
           
-          docker image inspect $IMAGE_NAME:$LATEST > /dev/null 2>&1 && docker tag $IMAGE_NAME:$LATEST $IMAGE_NAME:$BACKUP || echo "No existing image to backup"
+          docker image inspect $IMAGE_NAME:$LATEST > /dev/null 2>&1 && docker tag $IMAGE_NAME:$LATEST $IMAGE_NAME:$BACKUP && docker push $IMAGE_NAME:$BACKUP || echo "No existing image to backup"
           
           docker compose -f $COMPOSE down
           
