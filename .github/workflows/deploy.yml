@@ -199,5 +199,3 @@ jobs:
           echo "Pull Request build for main branch - no deployment"
           cd $TARGET_DIR
           mvn clean package -DskipTests
-
-          
