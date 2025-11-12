@@ -21,14 +21,15 @@ jobs:
           
           GITHUB_USER=${{ github.actor }}
           GHCR_TOKEN=${{ secrets.GHCR_TOKEN }}
+          GHCR_USER=$(echo "${{ github.actor }}" | tr '[:upper:]' '[:lower:]')
 
           IMAGE_BASE=ghcr.io/${GHCR_USER}/toychat-main
           LATEST=latest
           INPUT_TAG=${{ github.event.inputs.target }}
-          
+          echo "$INPUT_TAG"
           cd $BASE_PATH/$BRANCH_NAME/docker
           
-          docker login ghcr.io -u ${GITHUB_USER} --password ${GHCR_TOKEN}
+          echo $GHCR_TOKEN | docker login ghcr.io -u $GHCR_USER --password-stdin
           docker pull $IMAGE_BASE:$INPUT_TAG
           
           docker tag $IMAGE_BASE:$INPUT_TAG $IMAGE_BASE:$LATEST
