@@ -124,14 +124,10 @@ jobs:
           echo $GHCR_TOKEN | docker login ghcr.io -u $GHCR_USER --password-stdin
           echo "---------------------------------------login"          
           
-          if docker pull $IMAGE_BASE:$LATEST >/dev/null 2>&1; then
-            docker tag $IMAGE_BASE:$LATEST $IMAGE_BASE:$BACKUP
-            docker push $IMAGE_BASE:$BACKUP
-            echo "---------------------------------------backup pushed $IMAGE_BASE:$BACKUP"         
-          else
-            echo "---------------------------------------no backup image"         
-          fi
-          
+          docker tag $IMAGE_BASE:$LATEST $IMAGE_BASE:$BACKUP
+          docker push $IMAGE_BASE:$BACKUP
+          echo "---------------------------------------last image tagged and pushed"         
+
           docker compose -f $COMPOSE down
           
           #latest
