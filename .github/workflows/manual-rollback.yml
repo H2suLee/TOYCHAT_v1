@@ -25,7 +25,7 @@ jobs:
 
           IMAGE_BASE=ghcr.io/${GHCR_USER}/toychat-main
           LATEST=latest
-          INPUT_TAG=${{ github.event.inputs.target }}
+          INPUT_TAG=${{ github.event.inputs.tag }}
           echo "$INPUT_TAG"
           cd $BASE_PATH/$BRANCH_NAME/docker
           
