@@ -1,0 +1,24 @@
+name: Slack Notice
+
+on:
+  workflow_call:
+    inputs:
+      status:
+        required: true
+        type: string
+      workflow_name:
+        required: true
+        type: string
+
+jobs:
+  slack-notice:
+    runs-on: self-hosted
+    steps:
+      - name: Rollback main
+        run: |
+
+          curl -X POST -H 'Content-type: application/json' \
+          --data "{\"text\":\"💬 *${{ inputs.workflow_name }}* finished with status *${{ inputs.status }}*\"}" \
+          ${{ secrets.SLACK_WEBHOOK_URL }}
+          
+          

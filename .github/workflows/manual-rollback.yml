@@ -17,6 +17,7 @@ jobs:
 
           BASE_PATH=/srv/toychat
           BRANCH_NAME="${GITHUB_REF##*/}"
+          COMPOSE=$BASE_PATH/$BRANCH_NAME/docker/docker-compose.yml
           echo "Rolling back service $BRANCH_NAME"
           
           GITHUB_USER=${{ github.actor }}
@@ -39,3 +40,10 @@ jobs:
           echo "Restarting service $BRANCH_NAME"
           
           
+  notice:
+    if: always()
+    uses: ./.github/workflows/slack-notice.yml
+    with:
+      status: ${{job.status}}
+      workflow_name: ${{github.workflow}}
+    secrets: inherit          

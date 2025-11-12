@@ -195,3 +195,12 @@ jobs:
           echo "Pull Request build for main branch - no deployment"
           cd $TARGET_DIR
           mvn clean package -DskipTests
+          
+  notice:
+    if: always()
+    uses: ./.github/workflows/slack-notice.yml
+    with:
+      status: ${{job.status}}
+      workflow_name: ${{github.workflow}}
+    secrets: inherit
+    
