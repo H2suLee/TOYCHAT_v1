@@ -47,4 +47,4 @@ jobs:
     with:
       status: ${{ needs.rollback.result }}
       workflow_name: "${{ github.workflow }} ${{  github.ref_name }}"
-    secrets: inherit      
+    secrets: inherit
