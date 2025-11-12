@@ -198,9 +198,10 @@ jobs:
           
   notice:
     if: always()
+    needs: [build-and-deploy]
     uses: ./.github/workflows/slack-notice.yml
     with:
-      status: ${{job.status}}
-      workflow_name: ${{github.workflow}}
+      status: ${{ needs.build-and-deploy.result }}
+      workflow_name: ${{ github.workflow }}
     secrets: inherit
     
