@@ -14,7 +14,7 @@ jobs:
   slack-notice:
     runs-on: self-hosted
     steps:
-      - name: Rollback main
+      - name: Notify
         run: |
 
           curl -X POST -H 'Content-type: application/json' \
