@@ -6,6 +6,7 @@
 - OAuth2 기반 소셜 로그인 지원(Kakao, naver, google, github)
 - Redis, Pinia, jwt를 활용하여 안전하고 빠른 서비스
 - Firebase FCM 푸시알림 활용
+- promtail, loki 로 app 로그 수집, prometheus 로 app 메트릭 수집, grafana로 모니터링 시스템 구축
 
 ### 기술 스택
 #### FE
@@ -25,9 +26,10 @@
 
 #### Deployment
 - Docker & GHCR (컨테이너화 및 이미지 관리)
-- Github Actions (CICD)
+- Github Actions (CI/CD)
 - Nginx (리버스 프록시/SSL)
-- Vultr Linux/Ubuntu
+- Vultr Linux/Ubuntu VPS
+- systemd (인스턴스 관리 체계)
 
 #### Monitoring / Logging
 - Logback
