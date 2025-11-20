@@ -1,4 +1,4 @@
-# TOYCHAT
+# TOYCHAT_v1
 ### 개요
 
 - 실시간 메시징을 지원하는 채팅 애플리케이션(Websocket)
