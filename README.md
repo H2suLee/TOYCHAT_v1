@@ -16,15 +16,13 @@
 - Java 17
 - Spring Boot
 - Spring Security
-- Websocket
-- Logback
-- Maven
 
 #### Database & Cache
 - MongoDB
 - Redis
 
 #### Deployment
+- Mavan
 - Docker & GHCR (컨테이너화 및 이미지 관리)
 - Github Actions (CI/CD)
 - Nginx (리버스 프록시/SSL)
