@@ -19,7 +19,7 @@
 - promtail, loki 로 app 로그 수집, prometheus 로 app 메트릭 수집, grafana로 모니터링 시스템 구축
 - systemd 도입으로 여러 인스턴스 관리 체계 구축, nginx 도입으로 서브 도메인 관리, 리버스 프록시 적용
 - Github Actions 도입하여 CI/CD 체계 구축. push 시 자동 빌드→배포→헬스체크 진행, 롤백 트리거 시 롤백 수행. 
-- GHCR 도입으로 외부에서 docker image 관리
+- GHCR 도입으로 외부에서 Docker image 관리
 
 
 ### 기술 스택
