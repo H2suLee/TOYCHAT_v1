@@ -2,7 +2,7 @@
 
 ## 💬 TOYCHAT_v1
 
-![Image](https://github.com/user-attachments/assets/eba19089-a93b-4893-bcc8-6ee41fc8b4a1)
+<img width="600" alt="Image" src="https://github.com/user-attachments/assets/deb51809-ff7d-4f1e-bf54-5d05033d2df4" />
 
 ### 개요
 **TOYCHAT**은 웹소켓을 활용한 실시간 채팅 및 관리 프로그램입니다.
