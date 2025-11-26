@@ -2,7 +2,6 @@
 
 ## 💬 TOYCHAT_v1
 
-<img width="600" alt="Image" src="https://github.com/user-attachments/assets/deb51809-ff7d-4f1e-bf54-5d05033d2df4" />
 
 ### 개요
 **TOYCHAT**은 웹소켓을 활용한 실시간 채팅 및 관리 프로그램입니다.
@@ -58,5 +57,9 @@
 
 ### 향후 도전 및 목표
 - (v2) EC2, Jenkins 활용하여 CI/CD 구축 , Vue 3 → React 전환
+
+![Image](https://github.com/user-attachments/assets/0816d94d-6c8e-4dac-ad4e-356e658a617b)
+
+![Image](https://github.com/user-attachments/assets/6a07b02f-0db6-49e3-a9ec-9b2f67ca53c1)
 
 ***
