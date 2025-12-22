@@ -2,7 +2,6 @@ package com.toychat.prj.web;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,12 +13,14 @@ import org.springframework.web.bind.annotation.RestController;
 import com.toychat.prj.entity.User;
 import com.toychat.prj.service.UserService;
 
+import lombok.RequiredArgsConstructor;
+
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/users")
 public class UserController {
 	
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
     @GetMapping
     public List<User> getAllUsers() {

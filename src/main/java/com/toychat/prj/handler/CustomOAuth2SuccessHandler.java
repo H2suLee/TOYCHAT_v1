@@ -1,36 +1,32 @@
 package com.toychat.prj.handler;
 
 import java.io.IOException;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.toychat.prj.common.jwt.JwtRequestFilter;
 import com.toychat.prj.common.jwt.JwtUtil;
 import com.toychat.prj.common.util.Util;
 import com.toychat.prj.entity.CustomOAuth2User;
 import com.toychat.prj.entity.User;
-import com.toychat.prj.entity.UserDetailsImpl;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler {
 	
-	@Autowired
-	private JwtUtil jwtUtil;
+	private final JwtUtil jwtUtil;
 	
 	@Value("${spring.security.oauth2.callback-path}")
     private String callbackPath;
@@ -38,8 +34,7 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
     @Value("${jwt.refreshExpiration}")
     private long jwtRefreshExpirationSeconds;
     
-	@Autowired
-	private RedisTemplate<String, Object> redisTemplate;
+	private final RedisTemplate<String, Object> redisTemplate;
 	
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,

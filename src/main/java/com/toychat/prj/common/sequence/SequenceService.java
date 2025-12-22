@@ -1,6 +1,5 @@
 package com.toychat.prj.common.sequence;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.FindAndModifyOptions;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -8,10 +7,12 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class SequenceService {
-	@Autowired
-    private MongoOperations mongoOperations;
+    private final MongoOperations mongoOperations;
 
     public long generateSequence(String seqName) {
         Sequence counter = mongoOperations.findAndModify(

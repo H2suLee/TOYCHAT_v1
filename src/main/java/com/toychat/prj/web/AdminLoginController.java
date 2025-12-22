@@ -2,7 +2,6 @@ package com.toychat.prj.web;
 
 import java.util.concurrent.TimeUnit;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,37 +17,28 @@ import org.springframework.web.bind.annotation.RestController;
 import com.toychat.prj.common.jwt.JwtUtil;
 import com.toychat.prj.entity.User;
 import com.toychat.prj.entity.UserDetailsImpl;
-import com.toychat.prj.handler.CustomOAuth2SuccessHandler;
 import com.toychat.prj.repository.UserRepository;
 import com.toychat.prj.service.UserService;
 
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api")
 public class AdminLoginController {
-	@Autowired
-	private JwtUtil jwtUtil;
-
-	@Autowired
-	private AuthenticationManager authenticationManager;
-
-	@Autowired
-	private PasswordEncoder passwordEncoder;
-
-	@Autowired
-	private UserRepository userRepository;
-
-	@Autowired
-	private UserService userService;
+	private final JwtUtil jwtUtil;
+	private final AuthenticationManager authenticationManager;
+	private final PasswordEncoder passwordEncoder;
+	private final UserRepository userRepository;
+	private final UserService userService;
 	
     @Value("${jwt.refreshExpiration}")
     private long jwtRefreshExpirationSeconds;
     
-	@Autowired
-	private RedisTemplate<String, Object> redisTemplate;
+	private final RedisTemplate<String, Object> redisTemplate;
     
 	@PostMapping("/adminLogin")
     public User authenticate(@RequestBody User user, HttpServletResponse response) throws AuthenticationException {

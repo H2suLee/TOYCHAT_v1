@@ -12,11 +12,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
-import org.springframework.data.mongodb.core.aggregation.AggregationExpression;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.aggregation.ArrayOperators;
 import org.springframework.data.mongodb.core.aggregation.ComparisonOperators;
@@ -42,31 +40,19 @@ import com.toychat.prj.entity.Participant;
 import com.toychat.prj.entity.User;
 import com.toychat.prj.repository.ChatroomRepository;
 
-import jakarta.annotation.Resource;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class ChatroomService {
 
 	private final MongoTemplate mongoTemplate;
-
-	@Autowired
-    public ChatroomService(MongoTemplate mongoTemplate) {
-        this.mongoTemplate = mongoTemplate;
-    }
-
-	@Autowired
-	private SequenceService sequenceService;
-
-	@Autowired
-	private ChatroomRepository chatroomRepository;
-	
-	@Autowired
-	private RedisTemplate<String, Object> redisTemplate;
-	
-	@Autowired
-	private FcmService fcmService;
+	private final SequenceService sequenceService;
+	private final ChatroomRepository chatroomRepository;
+	private final RedisTemplate<String, Object> redisTemplate;
+	private final FcmService fcmService;
 
 	// 채팅방 생성
 	public Chatroom createRoom(User user) {

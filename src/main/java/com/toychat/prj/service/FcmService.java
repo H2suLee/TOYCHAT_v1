@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -14,38 +13,28 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
-import com.toychat.prj.common.sequence.SequenceService;
 import com.toychat.prj.common.util.Util;
 import com.toychat.prj.entity.Chatroom;
 import com.toychat.prj.entity.FcmKey;
 import com.toychat.prj.entity.FcmPush;
 import com.toychat.prj.entity.Participant;
 import com.toychat.prj.entity.User;
-import com.toychat.prj.handler.CustomOAuth2SuccessHandler;
 import com.toychat.prj.repository.FcmKeyRepository;
 import com.toychat.prj.repository.FcmPushRepository;
 import com.toychat.prj.repository.UserRepository;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class FcmService {
 	
-	@Autowired
-	private FcmKeyRepository fcmKeyRepository;
-
-	@Autowired
-	private FcmPushRepository fcmPushRepository;
-	
-	@Autowired
-	private SequenceService sequenceService;
-	
-	@Autowired
-	private UserRepository userRepository;
-	
-	@Autowired
-	private MongoTemplate mongoTemplate;
+	private final FcmKeyRepository fcmKeyRepository;
+	private final FcmPushRepository fcmPushRepository;
+	private final UserRepository userRepository;
+	private final MongoTemplate mongoTemplate;
 
 	
     public void sendNotification(FcmPush msg) {

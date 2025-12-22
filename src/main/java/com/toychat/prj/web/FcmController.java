@@ -3,7 +3,6 @@ package com.toychat.prj.web;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,18 +12,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.toychat.prj.entity.FcmKey;
 import com.toychat.prj.entity.FcmPush;
-import com.toychat.prj.handler.CustomOAuth2SuccessHandler;
 import com.toychat.prj.service.FcmService;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/fcm")
 public class FcmController {
 
-	@Autowired
-	private FcmService fcmService;
+	private final FcmService fcmService;
 	
     @PostMapping("/createKey")
     public String createKey(@RequestBody FcmKey fcmKey) {

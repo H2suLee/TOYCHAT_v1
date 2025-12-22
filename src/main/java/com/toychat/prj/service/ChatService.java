@@ -6,7 +6,6 @@ import static org.springframework.data.mongodb.core.aggregation.Aggregation.sort
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
@@ -19,21 +18,14 @@ import org.springframework.stereotype.Service;
 
 import com.toychat.prj.entity.Chat;
 import com.toychat.prj.entity.Chatroom;
-import com.toychat.prj.repository.ChatRepository;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class ChatService {
 	private final MongoTemplate mongoTemplate;
-	@Autowired
-	private RedisTemplate<String, Object> redisTemplate;
-	
-	@Autowired
-    public ChatService(MongoTemplate mongoTemplate) {
-        this.mongoTemplate = mongoTemplate;
-    }
-	
-	@Autowired
-	private ChatRepository chatRepository;
+	private final RedisTemplate<String, Object> redisTemplate;
 
 	// 채팅 리스트
 	public List<Chat> getChatsByChatroomId(Chatroom chatroom) {
