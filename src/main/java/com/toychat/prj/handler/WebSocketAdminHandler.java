@@ -34,18 +34,17 @@ public class WebSocketAdminHandler extends TextWebSocketHandler {
 		sessions.add(session);
 		sessionManager.addSession("admin", session);
 		URI uri = session.getUri();
-		if (uri != null) {
-			String query = uri.getQuery();
-			if (query != null) {
-				Map<String, String> queryParams = parseQuery(query);
-				String nick = queryParams.get("nick");
-				if (nick != null) {
-					session.getAttributes().put("nick", nick);
-					admSessions.computeIfAbsent(nick, k -> ConcurrentHashMap.newKeySet()).add(session);
+		if (uri == null) return;
 
-				}
-			}
-		}
+		String query = uri.getQuery();
+		if (query == null) return;
+
+		Map<String, String> queryParams = parseQuery(query);
+		String nick = queryParams.get("nick");
+		if (nick == null) return;
+
+		session.getAttributes().put("nick", nick);
+		admSessions.computeIfAbsent(nick, k -> ConcurrentHashMap.newKeySet()).add(session);
 
 		broadcastActiveAdmins();
 	}
@@ -54,14 +53,15 @@ public class WebSocketAdminHandler extends TextWebSocketHandler {
 	@Override
 	public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
 		String nick = (String) session.getAttributes().get("nick");
-		if (nick != null) {
-			Set<WebSocketSession> userSessions = admSessions.get(nick);
-			if (userSessions != null) {
-				userSessions.remove(session);
-				if (userSessions.isEmpty()) {
-					admSessions.remove(nick);
-				}
-			}
+		if (nick == null) return;
+		
+		Set<WebSocketSession> userSessions = admSessions.get(nick);
+		if (userSessions == null) return;
+
+		userSessions.remove(session);
+		
+		if (userSessions.isEmpty()) {
+			admSessions.remove(nick);
 		}
 
 		sessionManager.removeSession("admin", session);

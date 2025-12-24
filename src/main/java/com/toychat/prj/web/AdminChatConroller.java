@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,22 +12,16 @@ import org.springframework.web.bind.annotation.RestController;
 import com.toychat.prj.entity.Chatroom;
 import com.toychat.prj.entity.ChatroomInfo;
 import com.toychat.prj.entity.User;
-import com.toychat.prj.handler.WebSocketChatHandler;
-import com.toychat.prj.service.ChatService;
 import com.toychat.prj.service.ChatroomService;
+
+import lombok.RequiredArgsConstructor;
  
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/admin/chat")
 public class AdminChatConroller {
 	
-	@Autowired
-	private WebSocketChatHandler webSocketChatHandler;
-	
-    @Autowired
-    private ChatService chatService;
-    
-    @Autowired
-    private ChatroomService chatroomService;
+    private final ChatroomService chatroomService;
     
     @PostMapping("/mnglist")
     public List<ChatroomInfo> getChatRoomsMngList(@RequestBody HashMap<String,Object> searchMap) {

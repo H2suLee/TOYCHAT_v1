@@ -3,7 +3,6 @@ package com.toychat.prj.web;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
@@ -18,18 +17,19 @@ import org.springframework.web.bind.annotation.RestController;
 import com.toychat.prj.common.jwt.JwtUtil;
 import com.toychat.prj.entity.User;
 
+import lombok.RequiredArgsConstructor;
+
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/common")
 public class CommonController {
 
-	@Autowired
-	private JwtUtil jwtUtil;
+	private final JwtUtil jwtUtil;
 	
     @Value("${jwt.refreshExpiration}")
     private long jwtRefreshExpirationSeconds;
     
-	@Autowired
-	private RedisTemplate<String, Object> redisTemplate;
+	private final RedisTemplate<String, Object> redisTemplate;
 	
     @PostMapping("/refreshJwt")
     public User refreshJwt(@CookieValue(name = "refreshToken", required = false) String refreshToken) {

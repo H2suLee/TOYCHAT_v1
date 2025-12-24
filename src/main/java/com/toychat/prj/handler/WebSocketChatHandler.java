@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
@@ -36,20 +35,11 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class WebSocketChatHandler extends TextWebSocketHandler {
 
-	@Autowired
-	private SequenceService sequenceService;
-
-	@Autowired
-	private RedisTemplate<String, Object> redisTemplate;
-
-	@Autowired
-	private ChatRepository chatRepository;
-
-	@Autowired
-	private ChatroomService chatroomService;
-	
-	@Autowired
-	private FcmService fcmService;
+	private final SequenceService sequenceService;
+	private final RedisTemplate<String, Object> redisTemplate;
+	private final ChatRepository chatRepository;
+	private final ChatroomService chatroomService;
+	private final FcmService fcmService;
 	
 	private final ObjectMapper mapper = new ObjectMapper();
 	private final Set<WebSocketSession> sessions = new HashSet<>();
